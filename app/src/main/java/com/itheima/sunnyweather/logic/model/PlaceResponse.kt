@@ -2,6 +2,8 @@ package com.itheima.sunnyweather.logic.model
 
 import com.google.gson.annotations.SerializedName
 
+//data格式 见P603返回的json数据
+
 /**
  *
  * @param status:          places:城市数组
@@ -20,4 +22,4 @@ data class Place(val name :String, val location: Location,
  * 经纬度数据
  * @param lng:经度  lat:维度
  */
-data class Location(val lng:String ,val lat:String)
+data class Location(val lng:String,val lat:String)

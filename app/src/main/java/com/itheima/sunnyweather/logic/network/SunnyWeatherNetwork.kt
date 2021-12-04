@@ -15,6 +15,7 @@ object SunnyWeatherNetwork {
 
     suspend fun searchPlaces(query:String) = placeService.searchPlaces(query).await()
 
+    //await()挂起函数
     private suspend fun <T> Call<T>.await():T{
         return suspendCoroutine { continuation ->
             enqueue(object : Callback<T> {

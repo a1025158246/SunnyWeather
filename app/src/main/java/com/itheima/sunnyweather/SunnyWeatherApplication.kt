@@ -6,6 +6,7 @@ import android.content.Context
 
 class SunnyWeatherApplication: Application() {
     companion object{
+        //确保context不会造成内存泄漏
         @SuppressLint("StaticFieldLeak")
         lateinit var context:Context
 
