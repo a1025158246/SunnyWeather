@@ -1,16 +1,20 @@
 package com.itheima.sunnyweather.ui.weather
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.itheima.sunnyweather.R
 import com.itheima.sunnyweather.databinding.ActivityWeatherBinding
+import com.itheima.sunnyweather.logic.Repository.refreshWeather
 import com.itheima.sunnyweather.logic.model.Weather
 import com.itheima.sunnyweather.logic.model.getSky
 import java.text.SimpleDateFormat
@@ -19,19 +23,20 @@ import java.util.*
 class WeatherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWeatherBinding
-    private val viewModel by lazy { ViewModelProvider(this).get(WeatherViewModel::class.java) }
+    internal val viewModel by lazy { ViewModelProvider(this).get(WeatherViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //获取当前ui的decorView
         val decorView = window.decorView
-        decorView.systemUiVisibility=View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.statusBarColor = Color.TRANSPARENT
 
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //获取intent传来的数据
         if (viewModel.locationLng.isEmpty()) {
             viewModel.locationLng = intent.getStringExtra("location_lng") ?: ""
         }
@@ -41,9 +46,10 @@ class WeatherActivity : AppCompatActivity() {
         if (viewModel.placeName.isEmpty()) {
             viewModel.placeName = intent.getStringExtra("place_name") ?: ""
         }
-
+        //调用viewModel.refreshWeather 请求数据
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
 
+        //refreshWeather被调用后 weatherLiveData数据更新 触发此回调函数c
         viewModel.weatherLiveData.observe(this, androidx.lifecycle.Observer { result ->
             val weather = result.getOrNull()
             if (weather != null) {
@@ -52,10 +58,43 @@ class WeatherActivity : AppCompatActivity() {
                 Toast.makeText(this, "无法成功获取天气信息", Toast.LENGTH_SHORT).show()
                 result.exceptionOrNull()?.printStackTrace()
             }
+            binding.swipeRefresh.isRefreshing = false
         })
 
+        binding.swipeRefresh.setColorSchemeResources(R.color.design_default_color_primary)
+
+        refreshWeather()
+
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshWeather()
+        }
+
+        binding.layoutNow.navBtn.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        binding.drawerLayout.addDrawerListener(object :DrawerLayout.DrawerListener{
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+
+            override fun onDrawerOpened(drawerView: View) {}
+
+            override fun onDrawerClosed(drawerView: View) {
+                val manager = getSystemService(Context.INPUT_METHOD_SERVICE)as InputMethodManager
+                manager.hideSoftInputFromWindow(drawerView.windowToken,InputMethodManager.HIDE_NOT_ALWAYS)
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {}
+
+        })
     }
 
+
+    internal fun refreshWeather(){
+        viewModel.refreshWeather(viewModel.locationLng,viewModel.locationLat)
+        binding.swipeRefresh.isRefreshing = true
+    }
+
+    //数据绑定 UI渲染
     private fun showWeatherInfo(weather: Weather) {
 
         val placeName = findViewById<TextView>(R.id.placeName)
@@ -69,7 +108,6 @@ class WeatherActivity : AppCompatActivity() {
         val ultravioletText = findViewById<TextView>(R.id.ultravioletText)
         val carWashingText = findViewById<TextView>(R.id.carWashingText)
 
-        Log.e("weatherLayout", "findViewById")
         placeName.text = viewModel.placeName
         val realtime = weather.realtime
         val daily = weather.daily
@@ -80,7 +118,6 @@ class WeatherActivity : AppCompatActivity() {
         val currentPM25Text = "空气指数 ${realtime.airQuality.aqi.chn.toInt()}"
         currentAQI.text = currentPM25Text
         nowLayout.setBackgroundResource(getSky(realtime.skycon).bg)
-        Log.e("weatherLayout", "填充now.xml布局中数据")
         // 填充forecast.xml布局中的数据
         forecastLayout.removeAllViews()
         val days = daily.skycon.size
@@ -109,6 +146,6 @@ class WeatherActivity : AppCompatActivity() {
         ultravioletText.text = lifeIndex.ultraviolet[0].desc
         carWashingText.text = lifeIndex.carWashing[0].desc
         binding.weatherLayout.visibility = View.VISIBLE
-        Log.e("weatherLayout", "View.VISIBLE")
     }
+
 }

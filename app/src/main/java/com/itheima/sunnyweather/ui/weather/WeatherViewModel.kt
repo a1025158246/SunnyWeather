@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.itheima.sunnyweather.logic.Repository
 import com.itheima.sunnyweather.logic.model.Location
 
+// TODO: ViewModel UI层持有ViewModel使用refreshWeather时 ViewModel向仓库层提出请求 同时将请求结果通过observe回调
 class WeatherViewModel:ViewModel() {
 
     private val locationLiveData = MutableLiveData<Location>()

@@ -8,6 +8,9 @@ import com.itheima.sunnyweather.logic.model.Place
 
 class PlaceViewModel:ViewModel() {
 
+//    LiveData还能知晓它绑定的Activity或者Fragment的生命周期,它只会给前台活动的activity回调(这个很厉害).
+//    这样你可以放心的在它的回调方法里直接将数据添加到View,而不用担心会不会报错.(你也可以不用费心费力判断Fragment是否还存活)
+
     private val searchLiveData = MutableLiveData<String>()
 
     val placeList = ArrayList<Place>()

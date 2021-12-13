@@ -13,6 +13,13 @@ import retrofit2.http.Query
  * 返回值为Call<PlaceResponse>  Retrofit会将返回的JSON数据自动解析成PlaceResponse对象
  */
 interface PlaceService {
+
+    /**
+     * http://api.caiyunapp.com/v2/place?query=北京&token={token}&lang=zh_CN
+     * @Query 声明query是动态指定的  疑问：GET里面没写明query放哪
+     * 声明好返回对象类型 Retrofit会自动把返回数据解析成 相应对象
+     */
     @GET("v2/place?token=${SunnyWeatherApplication.TOKEN}&lang=zh_CN")
     fun searchPlaces(@Query("query") query: String ):Call<PlaceResponse>
+
 }

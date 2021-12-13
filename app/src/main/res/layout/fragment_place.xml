@@ -28,6 +28,7 @@
             android:paddingEnd="10dp"
             android:hint="输入地址"
             android:background="@mipmap/search_bg" />
+
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView

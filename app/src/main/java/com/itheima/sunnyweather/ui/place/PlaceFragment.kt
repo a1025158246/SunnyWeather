@@ -14,10 +14,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.itheima.sunnyweather.MainActivity
 import com.itheima.sunnyweather.R
+import com.itheima.sunnyweather.databinding.FragmentPlaceBinding
 import com.itheima.sunnyweather.ui.weather.WeatherActivity
 
+
 class PlaceFragment:Fragment() {
+
+
+//    private var _binding: FragmentPlaceBinding? = null
+//
+//    private val binding get() = _binding!!
 
     val viewModel by lazy { ViewModelProvider(this).get((PlaceViewModel::class.java)) }
 
@@ -28,13 +36,15 @@ class PlaceFragment:Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+//        _binding = FragmentPlaceBinding.inflate(inflater, container, false)
         return inflater.inflate(R.layout.fragment_place,container,false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if(viewModel.isPlaceSaved()){
+        //如果存储了地址值 发起请求并跳转页面
+        if(activity is MainActivity && viewModel.isPlaceSaved()){
             val place = viewModel.getSavedPlace()
             val intent = Intent(context,WeatherActivity::class.java).apply {
                 putExtra("location_lng",place.location.lng)
@@ -48,7 +58,6 @@ class PlaceFragment:Fragment() {
 
         val layoutInflater = LinearLayoutManager(activity)
         val recyclerView = activity!!.findViewById<RecyclerView>(R.id.recyclerView)
-
         val searchPlaceEdit = activity!!.findViewById<EditText>(R.id.searchPlaceEdit)
         val bgImageView = activity!!.findViewById<ImageView>(R.id.bgImageView)
 
@@ -79,7 +88,7 @@ class PlaceFragment:Fragment() {
             if(places!=null){
                 //数据不为空
                 recyclerView.visibility=View.VISIBLE
-                bgImageView?.visibility=View.GONE
+                bgImageView.visibility =View.GONE
                 viewModel.placeList.clear()
                 viewModel.placeList.addAll(places)
                 adapter.notifyDataSetChanged()
@@ -90,4 +99,9 @@ class PlaceFragment:Fragment() {
             }
         })
     }
+
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        _binding = null
+//    }
 }

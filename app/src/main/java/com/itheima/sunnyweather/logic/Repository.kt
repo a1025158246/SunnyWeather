@@ -11,6 +11,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlin.RuntimeException
 import kotlin.coroutines.CoroutineContext
 
+// TODO: 仓库层  主要工作判断调用方请求的数据是应该从本地数据源中获取还是从网络数据源中获取
 object Repository {
     /*//Dispatchers.IO 子线程
     fun searchPlaces(query:String)= liveData(Dispatchers.IO) {
@@ -33,9 +34,11 @@ object Repository {
     }*/
 
     fun searchPlaces(query: String) = fire(Dispatchers.IO) {
-        //获得返回的请求结果
+        //发起网络请求 获得数据 左边这个隔断的箭头表示这个执行一个挂起函数
         val placeResponse = SunnyWeatherNetwork.searchPlaces(query)
+        //如果接受到请求成功信号"ok"
         if (placeResponse.status == "ok") {
+            //包装数据 将返回值传给result
             val places = placeResponse.places
             Result.success(places)
         } else {
@@ -74,6 +77,7 @@ object Repository {
     }*/
 
     fun refreshWeather(lng: String, lat: String) = fire(Dispatchers.IO) {
+        //coroutineScope创建一个协程作用域 在其中使用async 保证两个网络请求都获得后再执行程序
         coroutineScope {
             val deferredRealtime = async {
                 SunnyWeatherNetwork.getRealtimeWeather(lng, lat)
@@ -83,6 +87,7 @@ object Repository {
             }
             val realtimeResponse = deferredRealtime.await()
             val dailyResponse = deferredDaily.await()
+            //如果两个请求都成功 打包请求结果
             if (realtimeResponse.status == "ok" && dailyResponse.status == "ok") {
                 val weather = Weather(realtimeResponse.result.realtime, dailyResponse.result.daily)
                 Result.success(weather)
@@ -105,9 +110,11 @@ object Repository {
             } catch (e: Exception) {
                 Result.failure<T>(e)
             }
+            //类似于setValue()通知数据变化
             emit(result)
         }
 
+    // TODO: 本地数据源
     fun savaPlace(place: Place) = PlaceDao.savaPlace(place)
 
     fun getSavedPlace() = PlaceDao.getSavedPlace()

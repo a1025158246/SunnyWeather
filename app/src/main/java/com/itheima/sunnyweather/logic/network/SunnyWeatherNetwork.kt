@@ -29,14 +29,14 @@ object SunnyWeatherNetwork {
         return suspendCoroutine { continuation ->
             enqueue(object : Callback<T> {
                 override fun onResponse(call: Call<T>, response: Response<T>) {
-                    Log.e("getDailyWeather", response.body().toString())
+//                    Log.e("getDailyWeather", response.body().toString())
                     val body = response.body()
                     if (body != null) continuation.resume(body)
                     else continuation.resumeWithException(RuntimeException("response body is null"))
                 }
 
                 override fun onFailure(call: Call<T>, t: Throwable) {
-                    Log.e("getDailyWeather", "onFailure ")
+//                    Log.e("getDailyWeather", "onFailure ")
                     continuation.resumeWithException(t)
                 }
             })

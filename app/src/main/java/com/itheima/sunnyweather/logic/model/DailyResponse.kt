@@ -3,10 +3,20 @@ package com.itheima.sunnyweather.logic.model
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
+/**
+ * @param status 状态码
+ * @param result 结果
+ */
 data class DailyResponse(val status:String,val result:Result){
 
+    /**
+     * Result
+     */
     data class Result(val daily:Daily)
 
+    /**
+     * Daily 近期温度、天气信息
+     */
     data class Daily(val temperature:List<Temperature>,val skycon:List<Skycon>,
                      @SerializedName("life_index")val lifeIndex:LifeIndex)
 

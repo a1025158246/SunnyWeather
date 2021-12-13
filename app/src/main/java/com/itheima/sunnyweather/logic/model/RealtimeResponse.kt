@@ -2,6 +2,7 @@ package com.itheima.sunnyweather.logic.model
 
 import com.google.gson.annotations.SerializedName
 
+
 data class RealtimeResponse(val status:String,val result: Result){
 
     data class Result(val realtime:Realtime)

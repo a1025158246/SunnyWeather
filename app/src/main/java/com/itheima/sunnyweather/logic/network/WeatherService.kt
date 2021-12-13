@@ -9,6 +9,7 @@ import retrofit2.http.Path
 
 interface WeatherService {
 
+    //http://api.caiyunapp.com/v2.5/{token}/{lng},{lat}/realtime.json
     @GET("v2.5/${SunnyWeatherApplication.TOKEN}/{lng},{lat}/realtime.json")
     fun getRealtimeWeather(@Path("lng") lng:String,@Path("lat")lat:String): Call<RealtimeResponse>
 

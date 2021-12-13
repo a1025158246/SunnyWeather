@@ -2,6 +2,7 @@ package com.itheima.sunnyweather.logic.model
 
 import com.itheima.sunnyweather.R
 
+
 class Sky(val info:String,val icon:Int,val bg:Int)
 
 private val sky = mapOf(

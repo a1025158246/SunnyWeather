@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 //data格式 见P603返回的json数据
 
 /**
- *
+ * PlaceResponse
  * @param status:          places:城市数组
  */
 data class PlaceResponse(val status:String,val places:List<Place>)

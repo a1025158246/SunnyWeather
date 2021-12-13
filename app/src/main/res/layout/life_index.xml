@@ -53,6 +53,7 @@
                         android:text="感冒">
 
                     </TextView>
+
                     <TextView
                         android:id="@+id/coldRiskText"
                         android:layout_width="wrap_content"
